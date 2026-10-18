@@ -1,0 +1,159 @@
+@import "tailwindcss";
+
+/*
+ * Watwa design tokens: a light, clear-water theme.
+ * Named by role so the theme is defined here and nowhere else:
+ *   canvas / canvas-2 / canvas-3   page, alternate section, deeper tint
+ *   fg / muted                     body text, secondary text
+ *   accent                         links, eyebrows, primary buttons (AA on canvas)
+ *   teal                           the Watwa "W" brand colour, for graphics
+ *   ember                          the orange from the printed catalogue ("plant")
+ */
+@theme {
+  --color-canvas: #f7fbfc;
+  --color-canvas-2: #ecf5f8;
+  --color-canvas-3: #d8ebf0;
+  --color-teal: #0b84a5;
+  --color-accent: #0a7593;
+  --color-fg: #0b2532;
+  --color-muted: #4c6571;
+  --color-ember: #b8620a;
+
+  --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-instrument), Georgia, serif;
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+  --font-hindi: var(--font-tiro), serif;
+
+  --ease-water: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  background: var(--color-canvas);
+  -webkit-font-smoothing: antialiased;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  overflow-x: clip;
+}
+
+::selection {
+  background: var(--color-teal);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/*
+ * Reveal-on-scroll. Elements start hidden only once JS has run (the inline
+ * script in layout.tsx removes .no-js), so a JS failure leaves content
+ * visible. Reduced motion shows everything immediately.
+ */
+html:not(.no-js) [data-reveal] {
+  opacity: 0;
+  transform: translateY(32px);
+}
+html:not(.no-js) [data-split] {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  html:not(.no-js) [data-reveal],
+  html:not(.no-js) [data-split] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Grain overlay: keeps the large dark fields from banding. */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 60;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+.hex-clip {
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+}
+
+.text-gradient {
+  background: linear-gradient(100deg, var(--color-fg) 5%, var(--color-accent) 55%, #14a6c9 95%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.glass {
+  background: linear-gradient(140deg, rgb(255 255 255 / 0.85), rgb(255 255 255 / 0.6));
+  border: 1px solid rgb(11 37 50 / 0.08);
+  box-shadow: 0 20px 60px -30px rgb(11 132 165 / 0.25);
+  backdrop-filter: blur(14px);
+}
+
+@layer components {
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+  }
+}
+
+/* Caustic light drifting over a surface, used behind the founders and CTA. */
+.caustics {
+  background:
+    radial-gradient(40% 60% at 20% 30%, rgb(79 209 232 / 0.22), transparent 70%),
+    radial-gradient(35% 50% at 80% 70%, rgb(11 132 165 / 0.12), transparent 70%),
+    radial-gradient(25% 35% at 60% 20%, rgb(242 159 56 / 0.1), transparent 70%);
+  background-size: 200% 200%;
+  animation: caustics 18s ease-in-out infinite alternate;
+}
+@keyframes caustics {
+  to {
+    background-position: 100% 100%;
+  }
+}
+
+.marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee var(--marquee-duration, 40s) linear infinite;
+}
+.marquee:hover {
+  animation-play-state: paused;
+}
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .caustics,
+  .marquee {
+    animation: none;
+  }
+}
